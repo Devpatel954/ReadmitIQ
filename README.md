@@ -30,9 +30,9 @@ Synthetic EHR encounters (`data.py`, 16 features) → engineered features (polyp
 
 > Data is synthetic – not for clinical use. For real data, replace `generate()` with your loader and keep the same columns (+ `readmitted_30d` label for performance monitoring).
 
-## Deploy on Vercel
-`vercel.json` defines two services on one domain: `frontend` (Vite, public, `/(.*)`) and `backend` (FastAPI, public at `/api/(.*)`, entrypoint `backend/main.py`). The frontend calls `/api` same-origin, so no bindings are needed.
+## Deploy on Render + Vercel
+- **Backend:** Render web service, root directory `backend`, Python 3.12, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+- **Frontend:** import the same repo into Vercel and set **Root Directory** to `frontend` (Vite auto-detect; build `npm run build`, output `dist`). `frontend/vercel.json` proxies `/api/*` to the Render service and sends app routes to `index.html`. No Vercel environment variable or service binding is needed.
+- Optional: set `OPENAI_API_KEY` on Render for LLM-written summaries.
 
-Import the repo in Vercel (Framework preset: **Services**) or run `vercel dev` locally. Optionally set `OPENAI_API_KEY` for LLM summaries.
-
-Serverless notes: the pre-trained model (`backend/artifacts/model.joblib`) ships with the repo; runtime writes (tasks, notes, retrained model) go to `/tmp`, which is **ephemeral and per-instance**. That is fine for a demo; use a database (Postgres/KV) for real persistence.
+The pre-trained model (`backend/artifacts/model.joblib`) ships with the repo. Workflow writes on Render's filesystem are ephemeral unless a persistent disk or database is configured; use a database for durable tasks and notes.
