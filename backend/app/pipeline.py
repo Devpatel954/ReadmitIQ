@@ -1,5 +1,5 @@
 """Training pipeline: preprocessing, feature engineering, model selection, calibration, validation."""
-import json
+import os
 import time
 from pathlib import Path
 
@@ -21,7 +21,9 @@ from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, StandardSc
 
 from .data import CATEGORICAL, NUMERIC, TARGET, generate
 
-ARTIFACT = Path(__file__).resolve().parent.parent / "artifacts" / "model.joblib"
+BUNDLED = Path(__file__).resolve().parent.parent / "artifacts" / "model.joblib"
+# Serverless filesystems are read-only except /tmp
+ARTIFACT = Path("/tmp/model.joblib") if os.getenv("VERCEL") else BUNDLED
 FEATURES = NUMERIC + CATEGORICAL
 ENGINEERED = ["polypharmacy", "total_prior_visits", "meds_per_day", "labs_per_day", "elevated_creatinine", "senior"]
 
@@ -132,9 +134,10 @@ def train(n: int = 12000, seed: int = 42) -> dict:
 
 
 def load() -> dict:
-    if not ARTIFACT.exists():
-        return train()
-    return joblib.load(ARTIFACT)
+    for path in (ARTIFACT, BUNDLED):
+        if path.exists():
+            return joblib.load(path)
+    return train()
 
 
 def risk_tier(p: float, thr: float) -> str:

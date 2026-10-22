@@ -29,3 +29,10 @@ Synthetic EHR encounters (`data.py`, 16 features) → engineered features (polyp
 `GET /api/model`, `/api/overview`, `/api/monitoring/timeline`, `/api/monitoring/simulate?scenario=none|mild|severe`, `POST /api/monitoring/upload` (CSV), `POST /api/predict`, `POST /api/retrain`, `GET /api/sample-csv`. Docs at `/docs`.
 
 > Data is synthetic – not for clinical use. For real data, replace `generate()` with your loader and keep the same columns (+ `readmitted_30d` label for performance monitoring).
+
+## Deploy on Vercel
+`vercel.json` defines two services on one domain: `frontend` (Vite, public, `/(.*)`) and `backend` (FastAPI, public at `/api/(.*)`, entrypoint `backend/main.py`). The frontend calls `/api` same-origin, so no bindings are needed.
+
+Import the repo in Vercel (Framework preset: **Services**) or run `vercel dev` locally. Optionally set `OPENAI_API_KEY` for LLM summaries.
+
+Serverless notes: the pre-trained model (`backend/artifacts/model.joblib`) ships with the repo; runtime writes (tasks, notes, retrained model) go to `/tmp`, which is **ephemeral and per-instance**. That is fine for a demo; use a database (Postgres/KV) for real persistence.

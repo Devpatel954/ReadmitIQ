@@ -1,5 +1,6 @@
 backend/.venv/
-backend/artifacts/
+backend/artifacts/*
+!backend/artifacts/model.joblib
 __pycache__/
 *.pyc
 frontend/node_modules/

@@ -1,6 +1,7 @@
 """Inpatient census + care-transition workflow (tasks, notes) with JSON persistence."""
 import json
 import math
+import os
 import uuid
 from pathlib import Path
 
@@ -10,7 +11,8 @@ import pandas as pd
 from .data import NUMERIC, generate
 from .pipeline import FEATURES, risk_tier
 
-STORE = Path(__file__).resolve().parent.parent / "artifacts" / "workflow.json"
+STORE = (Path("/tmp/workflow.json") if os.getenv("VERCEL")
+         else Path(__file__).resolve().parent.parent / "artifacts" / "workflow.json")
 PATIENTS: dict[str, dict] = {}
 
 FIRST = ["James", "Maria", "Robert", "Linda", "Michael", "Patricia", "William", "Elizabeth", "David", "Jennifer", "Richard",
