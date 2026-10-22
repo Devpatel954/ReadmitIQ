@@ -2,13 +2,6 @@
 
 Full-stack demo: **React + Recharts** UI, **FastAPI** backend, **scikit-learn** pipeline, optional **OpenAI** analyst.
 
-## Run
-```bash
-./run.sh            # creates venv, installs deps, starts API :8077 and UI (Vite prints the URL, usually :5173)
-```
-The model trains on first start (~10 s) and is cached in `backend/artifacts/`.
-Optional: `export OPENAI_API_KEY=...` (and `OPENAI_MODEL`) to turn the rule-based "AI monitoring analyst" into an LLM-written summary.
-
 ## What it is
 A care-transition **app** for hospital discharge teams, with the ML monitoring in an admin area.
 
